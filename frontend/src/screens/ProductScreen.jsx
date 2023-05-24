@@ -1,22 +1,34 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Row, Col, ListGroup, Card, Button, Image } from 'react-bootstrap';
 import Rating from '../components/Rating';
-import products from '../products';
+import axios from 'axios';
 
 const ProductScreen = () => {
+	const [product, setProduct] = useState({});
+
 	const { id: productId } = useParams();
-	const product = products.find((product) => product._id === productId);
+
+	useEffect(() => {
+		const fetchProducts = async () => {
+			const { data } = await axios.get(`/api/products/${productId}`);
+			setProduct(data);
+		};
+		fetchProducts();
+	}, [productId]);
 
 	return (
 		<>
-			<Link to='/' className='btn btn-light my-3'>Go Back</Link>
+			<Link to='/' className='btn btn-light my-3'>
+				Go Back
+			</Link>
 			<Row>
 				<Col md={5}>
 					<Image
 						src={product.image}
 						alt={product.name}
-                        className='img-fluid'
-                        fluid
+						className='img-fluid'
+						fluid
 					/>
 				</Col>
 				<Col md={4}>
@@ -35,28 +47,33 @@ const ProductScreen = () => {
 							Description: {product.description}
 						</ListGroup.Item>
 					</ListGroup>
-                </Col>
-                <Col md={3}>
-                    <Card>
-                        <ListGroup variant='flush'>
-                            <ListGroup.Item>
-                                <Row>
-                                    <Col>
-                                        Status:
-                                    </Col>
-                                    <Col>
-                                        <strong>{product.countInStock > 0 ? 'In Stock' : 'Out Of Stock'}</strong>
-                                    </Col>
-                                </Row>
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                <Button className='btn-block' type='button' disabled={product.countInStock === 0}>
-                                    Add To Cart
-                                </Button>
-                            </ListGroup.Item>
-                        </ListGroup>
-                    </Card>
-                </Col>
+				</Col>
+				<Col md={3}>
+					<Card>
+						<ListGroup variant='flush'>
+							<ListGroup.Item>
+								<Row>
+									<Col>Status:</Col>
+									<Col>
+										<strong>
+											{product.countInStock > 0
+												? 'In Stock'
+												: 'Out Of Stock'}
+										</strong>
+									</Col>
+								</Row>
+							</ListGroup.Item>
+							<ListGroup.Item>
+								<Button
+									className='btn-block'
+									type='button'
+									disabled={product.countInStock === 0}>
+									Add To Cart
+								</Button>
+							</ListGroup.Item>
+						</ListGroup>
+					</Card>
+				</Col>
 			</Row>
 		</>
 	);
