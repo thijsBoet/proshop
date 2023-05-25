@@ -8,7 +8,9 @@
 		"start": "node backend/server.js",
 		"server": "nodemon backend/server.js",
 		"client": "npm start --prefix frontend",
-		"dev": "concurrently \"npm run server\" \"npm run client\""
+		"dev": "concurrently \"npm run server\" \"npm run client\"",
+		"seed": "node backend/seeder.js",
+		"data:destroy": "node backend/seeder.js --destroy"
 	},
 	"repository": {
 		"type": "git",
@@ -21,9 +23,13 @@
 	},
 	"homepage": "https://github.com/thijsBoet/proshop#readme",
 	"dependencies": {
-		"express": "^4.18.2"
+		"bcryptjs": "^2.4.3",
+		"express": "^4.18.2",
+		"mongoose": "^7.2.0"
 	},
 	"devDependencies": {
+		"colors": "^1.4.0",
+		"concurrently": "^8.0.1",
 		"dotenv": "^16.0.3",
 		"nodemon": "^2.0.22"
 	}
