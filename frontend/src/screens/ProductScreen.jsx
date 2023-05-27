@@ -8,6 +8,7 @@ import {
 	Button,
 	Image,
 	Form,
+	ListGroupItem,
 } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import {
@@ -124,13 +125,16 @@ const ProductScreen = () => {
 								)}
 								<ListGroup.Item>
 									<Button
-												className='btn-block'
-												type='button'
-												disabled={product.countInStock === 0}
-												onClick={() => addToCarHandler(product._id, qty)}>
+										className='btn-block'
+										type='button'
+										disabled={product.countInStock === 0}
+										onClick={() =>
+											addToCarHandler(product._id, qty)
+										}>
 										Add To Cart
 									</Button>
 								</ListGroup.Item>
+								
 							</ListGroup>
 						</Card>
 					</Col>
