@@ -12,10 +12,22 @@ import {
 	deleteUser,
 } from '../controllers/userController.js';
 
-router.route('/').post(registerUser).get(getUsers);
-router.post('/logout', logoutUser);
-router.post('/login', authUser);
-router.route('/profile').get(getUserProfile).put(updateUserProfile);
-router.route('/:id').get(getUsersById).put(updateUser).delete(deleteUser);
+import { protect, admin } from '../middleware/authMiddleware.js';
+
+router
+	.route('/').post(registerUser).get(protect, admin, getUsers);
+router
+	.post('/logout', logoutUser);
+router
+	.post('/auth', authUser);
+router
+	.route('/profile')
+	.get(protect, getUserProfile)
+	.put(protect, updateUserProfile);
+router
+	.route('/:id')
+	.get(protect, admin, getUsersById)
+	.put(protect, admin, updateUser)
+	.delete(protect, admin, deleteUser);
 
 export default router;
