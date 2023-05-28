@@ -2,10 +2,6 @@ import { Row, Col } from 'react-bootstrap';
 import Product from '../components/Product';
 import {
 	useGetProductsQuery,
-	useGetProductQuery,
-	useCreateProductMutation,
-	useUpdateProductMutation,
-	useDeleteProductMutation,
 } from '../slices/productsApiSlice';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
