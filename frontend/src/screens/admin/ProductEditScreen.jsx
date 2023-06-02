@@ -1,38 +1,171 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import {Form, Button} from 'react-bootstrap'
-import {toast} from 'react-toastify'
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Form, Button } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import {
 	useUpdateProductMutation,
 	useGetProductDetailsQuery,
 } from '../../slices/productsApiSlice';
 
-import Message from '../../components/Message'
-import Loader from '../../components/Loader'
-import FormContainer from '../../components/FormContainer'
-
+import Message from '../../components/Message';
+import Loader from '../../components/Loader';
+import FormContainer from '../../components/FormContainer';
 
 const ProductEditScreen = () => {
-    const { id: productId } = useParams()
+	const { id: productId } = useParams();
 
-    const navigate = useNavigate()
+	const navigate = useNavigate();
 
-    const [name, setName] = useState('')
-    const [price, setPrice] = useState(0)
-    const [image, setImage] = useState('')
-    const [brand, setBrand] = useState('')
-    const [category, setCategory] = useState('')
-    const [countInStock, setCountInStock] = useState(0)
-    const [description, setDescription] = useState('')
-    const [uploading, setUploading] = useState(false)
+	const [name, setName] = useState('');
+	const [price, setPrice] = useState(0);
+	const [image, setImage] = useState('');
+	const [brand, setBrand] = useState('');
+	const [category, setCategory] = useState('');
+	const [countInStock, setCountInStock] = useState(0);
+	const [description, setDescription] = useState('');
+	const [uploading, setUploading] = useState(false);
 
-    const { data: product, isLoading, error, refetch } = useGetProductDetailsQuery(productId);
+	const {
+		data: product,
+		isLoading,
+		error,
+		refetch,
+	} = useGetProductDetailsQuery(productId);
 
-    console.log(product);
+	const [updateProduct, { isLoading: loadingUpdate, error: errorUpdate }] =
+		useUpdateProductMutation();
 
-    return (
-        <div>ProductEditScreen</div>
-    )
-}
+	useEffect(() => {
+		if (product) {
+			setName(product.name);
+			setPrice(product.price);
+			setImage(product.image);
+			setBrand(product.brand);
+			setCategory(product.category);
+			setCountInStock(product.countInStock);
+			setDescription(product.description);
+		}
+	}, [product]);
 
-export default ProductEditScreen
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        const updatedProduct = {
+            productId,
+            name,
+            price,
+            image,
+            brand,
+            category,
+            countInStock,
+            description,
+        };
+        const result = await updateProduct(updatedProduct).unwrap();
+        if (result.error) {
+			toast.error(result.error);
+		} else {
+            toast.success('Product updated successfully');
+			navigate('/admin/productlist');
+		}
+    };
+
+	return (
+		<>
+			<Link to='/admin/productlist' className='btn btn-light my-3'>
+				Go Back
+			</Link>
+			<FormContainer>
+				<h1>Edit Product</h1>
+				{loadingUpdate && <Loader />}
+				{isLoading ? (
+					<Loader />
+				) : error ? (
+					<Message variant='danger'>
+						{error?.data?.message || error?.error}
+					</Message>
+				) : (
+					<Form onSubmit={submitHandler}>
+						<Form.Group controlId='name' className='my-2'>
+							<Form.Label>Name</Form.Label>
+							<Form.Control
+								type='text'
+								placeholder='Enter name'
+								value={name}
+								onChange={(e) =>
+									setName(e.target.value)
+								}></Form.Control>
+						</Form.Group>
+						<Form.Group controlId='price' className='my-2'>
+							<Form.Label>Price</Form.Label>
+							<Form.Control
+								type='number'
+								placeholder='Enter price'
+								value={price}
+								onChange={(e) =>
+									setPrice(e.target.value)
+								}></Form.Control>
+						</Form.Group>
+						{/* <Form.Group controlId='image' className='my-2'>
+							<Form.Label>Image</Form.Label>
+							<Form.Control
+								type='file'
+								placeholder='Enter image'
+								value={Image}
+								onChange={(e) =>
+									setImage(e.target.value)
+								}></Form.Control>
+						</Form.Group> */}
+						<Form.Group controlId='Brand' className='my-2'>
+							<Form.Label>Brand</Form.Label>
+							<Form.Control
+								type='text'
+								placeholder='Enter brand'
+								value={brand}
+								onChange={(e) =>
+									setBrand(e.target.value)
+								}></Form.Control>
+						</Form.Group>
+						<Form.Group controlId='countInStock' className='my-2'>
+							<Form.Label>CountInStock</Form.Label>
+							<Form.Control
+								type='number'
+								placeholder='Enter countInStock'
+								value={countInStock}
+								onChange={(e) =>
+									setCountInStock(e.target.value)
+								}></Form.Control>
+						</Form.Group>
+						<Form.Group controlId='category' className='my-2'>
+							<Form.Label>Category</Form.Label>
+							<Form.Control
+								type='text'
+								placeholder='Enter category'
+								value={category}
+								onChange={(e) =>
+									setCategory(e.target.value)
+								}></Form.Control>
+						</Form.Group>
+						<Form.Group controlId='description' className='my-2'>
+							<Form.Label>Description</Form.Label>
+							<Form.Control
+								type='text'
+								placeholder='Enter description'
+								value={description}
+								onChange={(e) =>
+									setDescription(e.target.value)
+								}></Form.Control>
+						</Form.Group>
+
+						<Button
+							type='submit'
+							variant='primary'
+							className='my-2'>
+							Update
+						</Button>
+					</Form>
+				)}
+			</FormContainer>
+		</>
+	);
+};
+
+export default ProductEditScreen;
