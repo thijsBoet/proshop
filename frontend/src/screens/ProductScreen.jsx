@@ -8,15 +8,10 @@ import {
 	Button,
 	Image,
 	Form,
-	ListGroupItem,
 } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import {
-	useGetProductsQuery,
-	useGetProductQuery,
-	useCreateProductMutation,
-	useUpdateProductMutation,
-	useDeleteProductMutation,
+	useGetProductDetailsQuery,
 } from '../slices/productsApiSlice';
 import { addToCart } from '../slices/cartSlice';
 import Rating from '../components/Rating';
@@ -25,7 +20,7 @@ import Message from '../components/Message';
 
 const ProductScreen = () => {
 	const { id: productId } = useParams();
-	const { data: product, isLoading, isError } = useGetProductQuery(productId);
+	const { data: product, isLoading, isError } = useGetProductDetailsQuery(productId);
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -134,7 +129,6 @@ const ProductScreen = () => {
 										Add To Cart
 									</Button>
 								</ListGroup.Item>
-								
 							</ListGroup>
 						</Card>
 					</Col>

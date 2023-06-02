@@ -13,6 +13,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 		getOrderDetails: builder.query({
 			query: (orderId) => ({
 				url: `${ORDERS_URL}/${orderId}`,
+				method: 'GET',
 			}),
 			keepUnusedDataFor: 5,
 		}),
@@ -22,40 +23,45 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 				method: 'PUT',
 				body: { ...details },
 			}),
-        }),
-        getPaypalClientId: builder.query({
-            query: () => ({
-                url: PAYPAL_URL,
-            }),
-            keepUnusedDataFor: 5,
+		}),
+		getPaypalClientId: builder.query({
+			query: () => ({
+				url: PAYPAL_URL,
+				method: 'GET',
+			}),
+			keepUnusedDataFor: 5,
 		}),
 		getMyOrders: builder.query({
 			query: () => ({
 				url: `${ORDERS_URL}/myorders`,
+				method: 'GET',
 			}),
 			keepUnusedDataFor: 5,
 		}),
+		getOrders: builder.query({
+			query: () => ({
+				url: ORDERS_URL,
+				method: 'GET',
+			}),
+			keepUnusedDataFor: 5,
+		}),
+		deliverOrder: builder.mutation({
+			query: (orderId) => ({
+				url: `${ORDERS_URL}/${orderId}/deliver`,
+				method: 'PUT',
+			}),
+		}),
 		getOrderById: builder.query({
-			query: (id) => `${ORDERS_URL}/${id}`,
+			query: (id) => ({
+				url: `${ORDERS_URL}/${id}`,
+				method: 'GET',
+			}),
 		}),
 		addOrderItems: builder.mutation({
 			query: (body) => ({
 				url: ORDERS_URL,
 				method: 'POST',
 				body,
-			}),
-		}),
-		updateOrderToPaid: builder.mutation({
-			query: ({ id, paymentResult }) => ({
-				url: `${ORDERS_URL}/${id}/pay`,
-				method: 'PUT',
-				body: paymentResult,
-			}),
-		}),
-		updateOrderToDelivered: builder.mutation({
-			query: ({ id }) => ({
-				url: `${ORDERS_URL}/${id}/deliver`,
-				method: 'PUT',
 			}),
 		}),
 	}),
@@ -67,9 +73,9 @@ export const {
 	useGetOrdersQuery,
 	usePayOrderMutation,
 	useGetMyOrdersQuery,
-    useGetPaypalClientIdQuery,
+	useGetPaypalClientIdQuery,
+	useGetOrderQuery,
+	useDeliverOrderMutation,
 	useGetOrderByIdQuery,
 	useAddOrderItemsMutation,
-	useUpdateOrderToPaidMutation,
-	useUpdateOrderToDeliveredMutation,
 } = ordersApiSlice;
