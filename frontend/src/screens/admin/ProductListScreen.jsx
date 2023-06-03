@@ -5,6 +5,7 @@ import { FaTimes, FaEdit, FaTrash } from 'react-icons/fa';
 import {
 	useGetProductsQuery,
 	useCreateProductMutation,
+	useDeleteProductMutation,
 } from '../../slices/productsApiSlice';
 import { toast } from 'react-toastify';
 
@@ -12,20 +13,32 @@ import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 
 const ProductListScreen = () => {
-    const { data: products, isLoading, error } = useGetProductsQuery();
+    const { data: products, isLoading, error, refetch } = useGetProductsQuery();
 
     const [
 		createProduct,
-		{ isLoading: loadingCreateProduct, error: createProductError, refetch },
+		{ isLoading: loadingCreateProduct, error: errorCreate },
 	] = useCreateProductMutation();
 
-    const deleteHandler = (id) => { console.log('delete' + id); };
+	const [deleteProduct, { isLoading: loadingDeleteProduct, error: errorDelete }] = useDeleteProductMutation();
+
+	const deleteHandler = async (id) => { 
+		if(window.confirm('Are you sure you want to delete this product?')) {
+			try {
+				await deleteProduct(id);
+				refetch();
+				toast.success('Product deleted successfully');
+			} catch (error) {
+				toast.error(error?.data?.message || error?.error);
+			}
+		}
+	};
 
     const createProductHandler = async () => {
         if (window.confirm('Are you sure you want to create a new product?')) {
             try {
                 await createProduct();
-//                 refetch();
+	            refetch();
             } catch (error) {
                 toast.error(error?.data?.message || error?.error);
             }
@@ -39,12 +52,19 @@ const ProductListScreen = () => {
 					<h1>Products</h1>
 				</Col>
 				<Col className='text-end'>
-					<Button className='btn-sm m-3' onClick={createProductHandler}>
+					<Button
+						className='btn-sm m-3'
+						onClick={createProductHandler}>
 						<FaEdit /> Create Product
 					</Button>
 				</Col>
 			</Row>
-            {loadingCreateProduct && <Loader />}
+			{loadingCreateProduct && <Loader />}
+			{errorCreate && <Message variant='danger'>{errorCreate}</Message>}
+
+			{loadingDeleteProduct && <Loader />}
+			{errorDelete && <Message variant='danger'>{errorDelete}</Message>}
+
 			{isLoading ? (
 				<Loader />
 			) : error ? (

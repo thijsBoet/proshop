@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import {
 	useUpdateProductMutation,
 	useGetProductDetailsQuery,
+	useUploadProductImageMutation,
 } from '../../slices/productsApiSlice';
 
 import Message from '../../components/Message';
@@ -32,8 +33,11 @@ const ProductEditScreen = () => {
 		refetch,
 	} = useGetProductDetailsQuery(productId);
 
-	const [updateProduct, { isLoading: loadingUpdate, error: errorUpdate }] =
+	const [updateProduct, { isLoading: loadingUpdate }] =
 		useUpdateProductMutation();
+
+	const [uploadProductImage, { isLoading: loadingUpload }] =
+		useUploadProductImageMutation();
 
 	useEffect(() => {
 		if (product) {
@@ -47,26 +51,40 @@ const ProductEditScreen = () => {
 		}
 	}, [product]);
 
-    const submitHandler = async (e) => {
-        e.preventDefault();
-        const updatedProduct = {
-            productId,
-            name,
-            price,
-            image,
-            brand,
-            category,
-            countInStock,
-            description,
-        };
-        const result = await updateProduct(updatedProduct).unwrap();
-        if (result.error) {
+	const submitHandler = async (e) => {
+		e.preventDefault();
+		const updatedProduct = {
+			productId,
+			name,
+			price,
+			image,
+			brand,
+			category,
+			countInStock,
+			description,
+		};
+		const result = await updateProduct(updatedProduct).unwrap();
+		if (result.error) {
 			toast.error(result.error);
 		} else {
-            toast.success('Product updated successfully');
+			toast.success('Product updated successfully');
 			navigate('/admin/productlist');
+			refetch();
 		}
-    };
+	};
+
+	const uploadFileHandler = async (e) => {
+		const formData = new FormData();
+		formData.append('image', e.target.files[0]);
+
+		try {
+			const res = await uploadProductImage(formData).unwrap();
+			toast.success(res.message);
+			setImage(res);
+		} catch (error) {
+			toast.error(error?.data?.message || error?.error);
+		}
+	};
 
 	return (
 		<>
@@ -104,16 +122,22 @@ const ProductEditScreen = () => {
 									setPrice(e.target.value)
 								}></Form.Control>
 						</Form.Group>
-						{/* <Form.Group controlId='image' className='my-2'>
+						<Form.Group controlId='image' className='my-2'>
 							<Form.Label>Image</Form.Label>
 							<Form.Control
-								type='file'
-								placeholder='Enter image'
-								value={Image}
+								type='text'
+								placeholder='Enter image url'
+								value={image}
 								onChange={(e) =>
 									setImage(e.target.value)
 								}></Form.Control>
-						</Form.Group> */}
+									<Form.Control
+										className='mt-2'
+										type='file'
+										label='Choose image file'
+										placeholder='Choose image file'
+										onChange={ uploadFileHandler}></Form.Control>
+						</Form.Group>
 						<Form.Group controlId='Brand' className='my-2'>
 							<Form.Label>Brand</Form.Label>
 							<Form.Control

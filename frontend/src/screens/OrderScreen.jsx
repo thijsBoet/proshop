@@ -135,7 +135,7 @@ const OrderScreen = () => {
 							</p>
 							{order.isDelivered ? (
 								<Message variant='success'>
-									Delivered on {order.deliveredAt}
+									Delivered on {new Date(order.deliveredAt).toLocaleString()}
 								</Message>
 							) : (
 								<Message variant='danger'>

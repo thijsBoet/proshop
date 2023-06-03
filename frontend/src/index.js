@@ -14,6 +14,8 @@ import { Provider } from 'react-redux';
 
 import store from './store.js';
 
+
+
 import './assets/styles/bootstrap.custom.css';
 import './assets/styles/index.css';
 
@@ -22,9 +24,9 @@ import App from './App';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import AdminRoute from './components/AdminRoute';
 
-import HomeScreen from './screens/HomeScreen';
-import ProductScreen from './screens/ProductScreen';
-import CartScreen from './screens/CartScreen';
+import HomeScreen from './screens/HomeScreen.jsx';
+import ProductScreen from './screens/ProductScreen.jsx';
+import CartScreen from './screens/CartScreen.jsx';
 import LoginScreen from './screens/LoginScreen.jsx';
 import RegisterScreen from './screens/RegisterScreen.jsx';
 
@@ -32,11 +34,14 @@ import ShippingScreen from './screens/ShippingScreen.jsx';
 import PaymentScreen from './screens/PaymentScreen.jsx';
 import PlaceOrderScreen from './screens/PlaceOrderScreen.jsx';
 import OrderScreen from './screens/OrderScreen.jsx';
-import ProfileScreen from './screens/ProfileScreen';
+import ProfileScreen from './screens/ProfileScreen.jsx';
 
 import OrderListScreen from './screens/admin/OrderListScreen.jsx';
-import ProductListScreen from './screens/admin/ProductListScreen';
-import ProductEditScreen from './screens/admin/ProductEditScreen';
+import ProductListScreen from './screens/admin/ProductListScreen.jsx';
+import UserListScreen from './screens/admin/UserListScreen.jsx';
+import UserEditScreen from './screens/admin/UserEditScreen.jsx';
+import ProductEditScreen from './screens/admin/ProductEditScreen.jsx';
+
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -57,8 +62,16 @@ const router = createBrowserRouter(
 
 			<Route path='' element={<AdminRoute />}>
 				<Route path='/admin/orderlist' element={<OrderListScreen />} />
-				<Route path='/admin/productlist' element={<ProductListScreen />}/>
-				<Route path='/admin/product/:id/edit' element={<ProductEditScreen />}/>
+				<Route
+					path='/admin/productlist'
+					element={<ProductListScreen />}
+				/>
+				<Route
+					path='/admin/product/:id/edit'
+					element={<ProductEditScreen />}
+				/>
+				<Route path='/admin/userlist' element={<UserListScreen />} />
+				<Route path='/admin/user/:id/edit' element={<UserEditScreen />} />
 			</Route>
 		</Route>,
 	),
