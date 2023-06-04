@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const SearchBox = () => {

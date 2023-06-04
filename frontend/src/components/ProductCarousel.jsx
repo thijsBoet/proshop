@@ -3,7 +3,6 @@ import { Carousel, Image } from 'react-bootstrap';
 import { useGetTopProductsQuery } from '../slices/productsApiSlice';
 import Loader from './Loader';
 import Message from './Message';
-import Product from './Product';
 
 const ProductCarousel = () => {
 	const { data: products, isLoading, isError } = useGetTopProductsQuery();
@@ -33,3 +32,4 @@ const ProductCarousel = () => {
 };
 
 export default ProductCarousel;
+
