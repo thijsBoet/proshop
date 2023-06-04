@@ -1,8 +1,7 @@
 import React from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Button, Row, Col } from 'react-bootstrap';
-import { FaTimes, FaEdit, FaTrash } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import {
 	useGetProductsQuery,
 	useCreateProductMutation,
@@ -12,27 +11,19 @@ import { toast } from 'react-toastify';
 
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
-import Paginate from '../../components/Paginate';
 
 const ProductListScreen = () => {
-	const { pageNumber } = useParams();
+    const { data: products, isLoading, error, refetch } = useGetProductsQuery();
 
-	const { data, isLoading, error, refetch } = useGetProductsQuery({
-		pageNumber,
-	});
-
-	const [
+    const [
 		createProduct,
 		{ isLoading: loadingCreateProduct, error: errorCreate },
 	] = useCreateProductMutation();
 
-	const [
-		deleteProduct,
-		{ isLoading: loadingDeleteProduct, error: errorDelete },
-	] = useDeleteProductMutation();
+	const [deleteProduct, { isLoading: loadingDeleteProduct, error: errorDelete }] = useDeleteProductMutation();
 
-	const deleteHandler = async (id) => {
-		if (window.confirm('Are you sure you want to delete this product?')) {
+	const deleteHandler = async (id) => { 
+		if(window.confirm('Are you sure you want to delete this product?')) {
 			try {
 				await deleteProduct(id);
 				refetch();
@@ -43,16 +34,16 @@ const ProductListScreen = () => {
 		}
 	};
 
-	const createProductHandler = async () => {
-		if (window.confirm('Are you sure you want to create a new product?')) {
-			try {
-				await createProduct();
-				refetch();
-			} catch (error) {
-				toast.error(error?.data?.message || error?.error);
-			}
-		}
-	};
+    const createProductHandler = async () => {
+        if (window.confirm('Are you sure you want to create a new product?')) {
+            try {
+                await createProduct();
+	            refetch();
+            } catch (error) {
+                toast.error(error?.data?.message || error?.error);
+            }
+        }
+    }
 
 	return (
 		<>
@@ -92,8 +83,8 @@ const ProductListScreen = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{data.products &&
-								data.products.map((product) => (
+							{products &&
+								products.map((product) => (
 									<tr key={product._id}>
 										<td>{product._id}</td>
 										<td>{product.name}</td>
@@ -126,7 +117,6 @@ const ProductListScreen = () => {
 								))}
 						</tbody>
 					</Table>
-					<Paginate page={data.page} pages={data.pages} isAdmin />
 				</>
 			)}
 		</>

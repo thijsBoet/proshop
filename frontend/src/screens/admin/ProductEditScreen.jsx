@@ -1,21 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
-import { toast } from 'react-toastify';
-import {
-	useUpdateProductMutation,
-	useGetProductDetailsQuery,
-	useUploadProductImageMutation,
-} from '../../slices/productsApiSlice';
-
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import FormContainer from '../../components/FormContainer';
+import { toast } from 'react-toastify';
+import {
+	useGetProductDetailsQuery,
+	useUpdateProductMutation,
+	useUploadProductImageMutation,
+} from '../../slices/productsApiSlice';
 
 const ProductEditScreen = () => {
 	const { id: productId } = useParams();
-
-	const navigate = useNavigate();
 
 	const [name, setName] = useState('');
 	const [price, setPrice] = useState(0);
@@ -24,13 +21,12 @@ const ProductEditScreen = () => {
 	const [category, setCategory] = useState('');
 	const [countInStock, setCountInStock] = useState(0);
 	const [description, setDescription] = useState('');
-	const [uploading, setUploading] = useState(false);
 
 	const {
 		data: product,
 		isLoading,
-		error,
 		refetch,
+		error,
 	} = useGetProductDetailsQuery(productId);
 
 	const [updateProduct, { isLoading: loadingUpdate }] =
@@ -38,6 +34,29 @@ const ProductEditScreen = () => {
 
 	const [uploadProductImage, { isLoading: loadingUpload }] =
 		useUploadProductImageMutation();
+
+	const navigate = useNavigate();
+
+	const submitHandler = async (e) => {
+		e.preventDefault();
+		try {
+			await updateProduct({
+				productId,
+				name,
+				price,
+				image,
+				brand,
+				category,
+				description,
+				countInStock,
+			});
+			toast.success('Product updated');
+			refetch();
+			navigate('/admin/productlist');
+		} catch (err) {
+			toast.error(err?.data?.message || err.error);
+		}
+	};
 
 	useEffect(() => {
 		if (product) {
@@ -50,28 +69,6 @@ const ProductEditScreen = () => {
 			setDescription(product.description);
 		}
 	}, [product]);
-
-	const submitHandler = async (e) => {
-		e.preventDefault();
-		const updatedProduct = {
-			productId,
-			name,
-			price,
-			image,
-			brand,
-			category,
-			countInStock,
-			description,
-		};
-		const result = await updateProduct(updatedProduct).unwrap();
-		if (result.error) {
-			toast.error(result.error);
-		} else {
-			toast.success('Product updated successfully');
-			navigate('/admin/productlist');
-			refetch();
-		}
-	};
 
 	const uploadFileHandler = async (e) => {
 		const formData = new FormData();
@@ -96,22 +93,21 @@ const ProductEditScreen = () => {
 				{isLoading ? (
 					<Loader />
 				) : error ? (
-					<Message variant='danger'>
-						{error?.data?.message || error?.error}
-					</Message>
+					<Message variant='danger'>{error}</Message>
 				) : (
 					<Form onSubmit={submitHandler}>
-						<Form.Group controlId='name' className='my-2'>
+						<Form.Group controlId='name'>
 							<Form.Label>Name</Form.Label>
 							<Form.Control
-								type='text'
+								type='name'
 								placeholder='Enter name'
 								value={name}
 								onChange={(e) =>
 									setName(e.target.value)
 								}></Form.Control>
 						</Form.Group>
-						<Form.Group controlId='price' className='my-2'>
+
+						<Form.Group controlId='price'>
 							<Form.Label>Price</Form.Label>
 							<Form.Control
 								type='number'
@@ -121,6 +117,7 @@ const ProductEditScreen = () => {
 									setPrice(e.target.value)
 								}></Form.Control>
 						</Form.Group>
+
 						<Form.Group controlId='image'>
 							<Form.Label>Image</Form.Label>
 							<Form.Control
@@ -131,13 +128,13 @@ const ProductEditScreen = () => {
 									setImage(e.target.value)
 								}></Form.Control>
 							<Form.Control
-								className='mt-2'
 								label='Choose File'
 								onChange={uploadFileHandler}
 								type='file'></Form.Control>
 							{loadingUpload && <Loader />}
 						</Form.Group>
-						<Form.Group controlId='Brand' className='my-2'>
+
+						<Form.Group controlId='brand'>
 							<Form.Label>Brand</Form.Label>
 							<Form.Control
 								type='text'
@@ -147,8 +144,9 @@ const ProductEditScreen = () => {
 									setBrand(e.target.value)
 								}></Form.Control>
 						</Form.Group>
-						<Form.Group controlId='countInStock' className='my-2'>
-							<Form.Label>CountInStock</Form.Label>
+
+						<Form.Group controlId='countInStock'>
+							<Form.Label>Count In Stock</Form.Label>
 							<Form.Control
 								type='number'
 								placeholder='Enter countInStock'
@@ -157,7 +155,8 @@ const ProductEditScreen = () => {
 									setCountInStock(e.target.value)
 								}></Form.Control>
 						</Form.Group>
-						<Form.Group controlId='category' className='my-2'>
+
+						<Form.Group controlId='category'>
 							<Form.Label>Category</Form.Label>
 							<Form.Control
 								type='text'
@@ -167,7 +166,8 @@ const ProductEditScreen = () => {
 									setCategory(e.target.value)
 								}></Form.Control>
 						</Form.Group>
-						<Form.Group controlId='description' className='my-2'>
+
+						<Form.Group controlId='description'>
 							<Form.Label>Description</Form.Label>
 							<Form.Control
 								type='text'
@@ -181,7 +181,7 @@ const ProductEditScreen = () => {
 						<Button
 							type='submit'
 							variant='primary'
-							className='my-2'>
+							style={{ marginTop: '1rem' }}>
 							Update
 						</Button>
 					</Form>
