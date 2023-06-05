@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Table, Form, Button, Row, Col } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import { FaTimes, FaCheck } from 'react-icons/fa';
+import { FaTimes } from 'react-icons/fa';
 
 import Message from '../components/Message';
 import Loader from '../components/Loader';
@@ -24,7 +24,7 @@ const ProfileScreen = () => {
 
 	const [
 		updateProfile,
-		{ isLoading: loadingUpdateProfile, isSuccess, isError },
+		{ isLoading: loadingUpdateProfile },
 	] = useProfileMutation();
 
 	const { data: orders, isLoading, error } = useGetOrdersQuery();

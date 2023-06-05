@@ -8,7 +8,7 @@ import {
 	Button,
 	Card,
 } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import {
 	useGetOrderDetailsQuery,
@@ -31,7 +31,7 @@ const OrderScreen = () => {
 	} = useGetOrderDetailsQuery(orderId);
 
 	const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
-	const [deliverOrder, { isLoading: loadingDeliver }] =
+	const [deliverOrder] =
 		useDeliverOrderMutation();
 	const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
@@ -65,7 +65,6 @@ const OrderScreen = () => {
 
 	async function onApprove(data, actions) {
 		return actions.order.capture().then(async function (details) {
-			const { id, status, update_time, payer } = details;
 			try {
 				await payOrder({ orderId, details });
 				await refetch();
@@ -76,11 +75,11 @@ const OrderScreen = () => {
 		});
 	}
 
-	async function onApprovedTest() {
-		await payOrder({ orderId, details: { payer: {} } });
-		await refetch();
-		toast.success('Payment successful');
-	}
+	// async function onApprovedTest() {
+	// 	await payOrder({ orderId, details: { payer: {} } });
+	// 	await refetch();
+	// 	toast.success('Payment successful');
+	// }
 
 	function onError(err) {
 		toast.error(err?.data?.message || err?.message);
