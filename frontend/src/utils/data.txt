@@ -1,0 +1,7 @@
+# NODE_ENV=production
+# PORT=5000
+MONGO_URI=mongodb+srv://mboet:Shadow0_mongodb@proshop.wziv5xi.mongodb.net/proshop?retryWrites=true&w=majority
+JWT_SECRET=8VkCPu6DGzXTqAaWoc95SaUEcdQu2jjR
+PAYPAL_URL=https://api.sandbox.paypal.com
+PAYPAL_CLIENT_ID=AYT1xRT3FwdRDJ6HMCmUmPkIGg3P-faoPDzxPhDOwDgW49b3p9Pf6QxMIQSYsHkNDXGJTc3J8ENdpTjH
+PAGINATION_LIMIT=8
